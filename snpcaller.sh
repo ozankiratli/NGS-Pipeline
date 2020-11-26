@@ -1,0 +1,18 @@
+#!/bin/bash
+
+source PARAMETERS
+source PROGRAMPATHS
+source DIRECTORIES
+
+REF=$1
+VCFFILEN=$VCFOUTPUTFILENAME".vcf"
+
+VCFFILE=$VCFDIR/$VCFFILEN
+
+echo "Creating VCF file: $VCFFILE ..."
+
+$FREEBAYES -f $REF $FREEBAYESOPTIONS $READYDIR/*.bam > $VCFFILE
+wait
+echo "Done!"
+echo " "
+
