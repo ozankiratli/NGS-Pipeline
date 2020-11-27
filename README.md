@@ -1,6 +1,19 @@
 # DESCRIPTION
 These set of scripts is designed to align multiple samples of same species to a reference genome, do preprocessing, and then call variants. 
-
+The scripts use the following software for given purposes in the given order. 
+1) `trimgalore` to trim adapters, clip the ends of the reads and generating fastqc reports
+2) `bwa mem` for aligning 
+3) `samtools sort -n` for sorting by name 
+4) `samtools fixmate` for fixing mate information 
+5) `samtools sort` for sorting by coordinates
+6) `samtools markdup` for marking duplicates
+7) `picard-tools AddOrReplaceReadGroups` for addding and replacing RGtags
+8) `picard-tools CleanSam` for setting Mapping Quality 0 for the sequences that are not aligned.
+9) `samtools index` for indexing 
+10) `samtools coverage` for coverage reports
+11) `bamtools stats` for alignment reports
+12) `freebayes` for variant calling 
+ 
 # USAGE
 ## Download
 ```
