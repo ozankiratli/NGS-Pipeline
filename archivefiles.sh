@@ -11,7 +11,7 @@ case $ARCHIVEFILES in
 	A)
 		echo "Moving the folder $INPUT to $ARCHIVEDIR"
 		mkdir -p $ARCHIVEDIR
-		nohup mv $INPUT $ARCHIVEDIR >/dev/null 2>&1
+		nohup mv $INPUT $ARCHIVEDIR >/dev/null 2>&1 & disown
 		;;
 	D)
 		echo "Deleting the folder $INPUT"
