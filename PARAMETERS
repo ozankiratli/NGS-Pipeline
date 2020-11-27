@@ -4,15 +4,21 @@ source CORES
 THREADS=5
 JOBBINS=5 
 DATASOURCE=Data
-REFERENCEFILE=/home/ozank/Analysis/NGS/Dmel_mtDNA_ref_v6.fasta
-JAVAHEAPSIZE="2g"
+REFERENCEFILE=/home/tholian/Nextcloud/GitHub/NGS-Pipeline/Dmel_mtDNA_ref_v6.fasta
+
+# JAVA OPTIONS
+# Heap size should be set to a value below (AVAILBLE_RAM/THREADS)
+HEAPSIZE="-Xmx2g"
+# Garbage collector should be set according to: https://www.oracle.com/webfolder/technetwork/tutorials/obe/java/gc01/index.html
+GARBAGECOLLECTOR="-XX:ParallelGCThreads=$JAVAGCCORES"
+JAVAOPTIONS="$HEAPSIZE $GARBAGECOLLECTOR"
 
 # TEMPFILES takes the following options: 
 # "K" for Keep
 # "A" for Archive 
 # "D" for Deletion 
 ARCHIVEFILES="K"
-ARCHIVEDIR=/home/backup
+ARCHIVEDIR=/home/tholian/tmp
 
 # TRIMMING OPTIONS
 TRIMQUALITY=25
@@ -36,7 +42,7 @@ RGTAGFILE=RGTAGS
 ADDGROUPOPTIONS="VALIDATION_STRINGENCY=STRICT CREATE_INDEX=false" 
 
 # CONSENSUS AND VARIANT CALLING OPTIONS
-PLOIDY=2
+PLOIDY=1
 VARQUALMIN=20
 BASEQUALMIN=20
 MINALT_FRACTION=0.05

@@ -15,9 +15,10 @@ LB=`grep $ID $RGTAGFILE | sed 's/\,/ /g' | awk '{print $3}'`
 PL=`grep $ID $RGTAGFILE | sed 's/\,/ /g' | awk '{print $4}'`
 PU=`grep $ID $RGTAGFILE | sed 's/\,/ /g' | awk '{print $5}'`
 
-BAM=$INPUT
 RGTAGGED=$RGTAGDIR/$OUTPUT
 
-echo "Tagging $BAM ..."
-$PICARD AddOrReplaceReadGroups I=$INPUT O=$RGTAGGED RGID=$ID RGSM=$SM RGLB=$LB RGPL=$PL RGPU=$PU $ADDGROUPOPTIONS
+echo "RG Tagging $INPUT ..."
+$PICARD AddOrReplaceReadGroups I=$INPUT O=$RGTAGGED RGID=$ID RGSM=$SM RGLB=$LB RGPL=$PL RGPU=$PU 
+#$ADDGROUPOPTIONS
+#$SAMTOOLS addreplacerg -@ $SAMTOOLSCORES -r 'ID:$ID' -r 'SM:$SM' -r 'LB:$LB' -r 'PL:$PL' -r 'PU:$PU'  -o $RGTAGGED $INPUT
 echo "$ID Done!"

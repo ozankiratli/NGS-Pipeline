@@ -8,9 +8,7 @@ source DIRECTORIES
 source CORES
 
 OUTPUT=`echo $INPUT | sed 's/\// /g' | awk '{print $NF}' | sed 's/\_^*[a-z]\w*.bam/\_fixmate.bam/g'`
-
-BAM=$INPUT
 FIXED=$FIXEDDIR/$OUTPUT
 
-echo "Sorting $BAM ..."
-$SAMTOOLS fixmate -@ $SAMTOOLSCORES -m $BAM $FIXED
+echo "Fixing Mate Info for $INPUT ..."
+$SAMTOOLS fixmate -@ $SAMTOOLSCORES -m $INPUT $FIXED

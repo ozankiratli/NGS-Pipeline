@@ -5,8 +5,8 @@ source PROGRAMPATHS
 source DIRECTORIES
 
 INPUT=$1
-ID=`echo $INPUT | sed 's/\.bam//g' | sed 's/\// /g' | awk '{print $NF}' `
-CLEAN=$CLEANDIR/$ID"_clean.bam"
-echo "Cleaning bam file: $ID"
+OUTPUT=`echo $INPUT | sed 's/\// /g' | awk '{print $NF}' | sed 's/\_^*[a-z]\w*.bam/\_clean.bam/g'`
+CLEAN=$CLEANDIR/$OUTPUT
+echo "Cleaning bam file: $INPUT"
 $PICARD CleanSam I=$INPUT O=$CLEAN
-echo "$ID Done!" 
+

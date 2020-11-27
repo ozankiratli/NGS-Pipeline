@@ -16,21 +16,6 @@ echo " "
 source CORES
 source PARAMETERS
 
-echo "Checking whether the required programs installed..."
-source $WD/checkinstalled.sh
-echo " "
-CHECKPT1=`grep "not" $WD/checkinstalled.tmp`
-if [ ! -z "$CHECKPT1" ]
-then
-	echo "Please install the missing programs or correct their paths in PROGRAMPATHS file"
-	rm -f $WD/checkinstalled.tmp
-	exit 1
-else
-	rm -f $WD/checkinstalled.tmp
-fi
-wait
-echo " "
-
 
 echo "Checking REFERENCE file..."
 RefCheck=`ls $REFERENCEFILE`
@@ -46,7 +31,7 @@ wait
 echo "Checking DATA files..."
 if [ -d $DATASOURCE  ] ; then
 	DATAIN=$DATASOURCE
-	echo "The data source  is set to: $DATAIN"
+	echo "The data source is set to: $DATAIN"
 else
 	echo "Data directory does not exist! Check PARAMETERS file"
 	exit 1
@@ -64,6 +49,35 @@ fi
 echo " "
 wait
 
+if [ -d $ARCHIVEDIR ] ; then 
+  	CHECKARCHIVE=`ls $ARCHIVEDIR`
+	if [ -z $CHECKARCHIVE ] ; then
+	  	echo "Archive directory $ARCHIVEDIR exists, and it's empty."
+	else
+	  	echo "Archive directory $ARCHIVEDIR exists, but it's not empty. Please empty the directory or change the variable in PARAMETERS file."
+		exit 1
+	fi
+else
+  	echo "Archive directory $ARCHIVEDIR doesn't exist! Creating the directory!"
+	mkdir -p $ARCHIVEDIR
+fi
+
+
+echo "Checking whether the required programs installed..."
+source $WD/checkinstalled.sh
+echo " "
+CHECKPT1=`grep "not" $WD/checkinstalled.tmp`
+if [ ! -z "$CHECKPT1" ]
+then
+	echo "Please install the missing programs or correct their paths in PROGRAMPATHS file"
+	rm -f $WD/checkinstalled.tmp
+	exit 1
+else
+	rm -f $WD/checkinstalled.tmp
+fi
+wait
+echo " "
+
 echo "Building Reference..."
 mkdir -p $OUTPUTDIR
 mkdir -p $REFERENCEDIR
@@ -73,6 +87,7 @@ REF=`echo $REFERENCEFILE | sed 's/\// /g' | awk '{print $NF}'`
 echo $REF
 REFERENCE=$REFERENCEDIR/$REF
 echo $REFERENCE
+export _JAVA_OPTIONS=$JAVAOPTIONS
 $WD/buildref.sh $REFERENCE > $REPORTSDIR/buildreference_report.txt
 wait
 echo "Reference building is completed!"
@@ -140,20 +155,6 @@ wait
 
 TEMPDIR=$BAMDIR
 
-echo "Cleaning BAM files..."
-mkdir -p $CLEANDIR
-export _JAVA_OPTIONS="-Xmx$JAVAHEAPSIZE"
-$PARALLEL --progress -j $JOBBINS $WD/cleansam.sh {} ::: $INPUT
-wait
-echo "Done!"
-INPUT=$CLEANDIR"/*.bam"
-echo " "
-echo " "
-$WD/archivefiles.sh $TEMPDIR
-wait
-
-TEMPDIR=$CLEANDIR
-
 echo "Sorting by name..."
 mkdir -p $NSORTEDDIR
 $PARALLEL --progress -j $SAMTOOLSJOBS $WD/namesort.sh {} ::: $INPUT
@@ -180,7 +181,7 @@ wait
 
 TEMPDIR=$FIXEDDIR
 
-echo "Sorting BAM files..."
+echo "Sorting BAM files by coordinate..."
 mkdir -p $SORTEDDIR
 $PARALLEL --progress -j $SAMTOOLSJOBS $WD/coordsort.sh {} ::: $INPUT
 wait
@@ -220,7 +221,6 @@ TEMPDIR=$MARKDUPDIR
 
 echo "RG Tagging..."
 mkdir -p $RGTAGDIR
-export _JAVA_OPTIONS="-Xmx$JAVAHEAPSIZE"
 $PARALLEL --progress -j $JOBBINS $WD/rgtags.sh {} ::: $INPUT
 wait
 echo "Done!"
@@ -237,6 +237,25 @@ $WD/archivefiles.sh $TEMPDIR
 wait
 
 TEMPDIR=$RGTAGDIR
+
+echo "Cleaning BAM files..."
+mkdir -p $CLEANDIR
+$PARALLEL --progress -j $JOBBINS $WD/cleansam.sh {} ::: $INPUT
+wait
+echo "Done!"
+INPUT=$CLEANDIR"/*.bam"
+echo " "
+echo " "
+echo "Indexing BAM files..."
+$PARALLEL --progress -j $SAMTOOLSJOBS $WD/indexbam.sh {} ::: $INPUT
+wait
+echo "Done!"
+echo " "
+echo " "
+$WD/archivefiles.sh $TEMPDIR
+wait
+
+TEMPDIR=$CLEANDIR
 
 
 #BSQR goes here!
@@ -276,7 +295,7 @@ echo "Starting variant calling..."
 nohup $WD/archivefiles.sh $TEMPDIR </dev/null >/dev/null 2>&1 &
 wait
 echo " "
-$WD/snpcaller.sh $REFERENCE
+$WD/variantcaller.sh $REFERENCE
 wait
 echo "Done!"
 echo " "
