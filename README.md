@@ -1,10 +1,10 @@
 # DESCRIPTION
-These set of scripts is designed to align multiple samples of same species to a reference genome, then building consensus sequences and call variants. 
+These set of scripts is designed to align multiple samples of same species to a reference genome, do preprocessing, and then call variants. 
 
 # USAGE
 ## Download
 ```
-git clone https://github.com/evolozzy/DNA-Alignment-Pipeline.git
+git clone https://github.com/evolozzy/NGS-Pipeline.git
 ```
 ## Before using
 - Make a subdirectory named `Data` in the folder containing your scripts and copy your files there, or change the line containing `DATASOURCE` in your `PARAMETERS` file, and set it to the folder that contains your data. 
@@ -15,7 +15,6 @@ git clone https://github.com/evolozzy/DNA-Alignment-Pipeline.git
 ### Setting the parameters
 - Carefully change the `PARAMETERS`.
   - Set the `REFERENCEFILE` to the path to reference.
-  - If you have two or more sets to merge, set `MERGE` to `1`, otherwise set it to `0`.
   - If you are running on multiple threads set `THREADS` to number of cores you want to use.
 - Set the directories to be used in `DIRECTORIES` file.
   - If you're not running the scripts in the directory you have the scripts change the line containing `WD` to the path that contains your scripts.
