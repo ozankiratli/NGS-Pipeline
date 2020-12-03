@@ -13,5 +13,5 @@ OUTPUT=`echo $INPUT | sed 's/\// /g' | awk '{print $NF}' | sed 's/.sam/\_nsorted
 NSORTED=$NSORTEDDIR/$OUTPUT
 
 echo "Sorting $INPUT by name..."
-$SAMTOOLS sort -@ $SAMTOOLSCORES -O bam -n $INPUT -o $NSORTED
+$SAMTOOLS collate -@ $SAMTOOLSCORES -u $INPUT -o $NSORTED
 

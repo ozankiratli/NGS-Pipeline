@@ -19,6 +19,8 @@ RGTAGGED=$RGTAGDIR/$OUTPUT
 
 echo "RG Tagging $INPUT ..."
 $PICARD AddOrReplaceReadGroups I=$INPUT O=$RGTAGGED RGID=$ID RGSM=$SM RGLB=$LB RGPL=$PL RGPU=$PU 
+
+
 #$ADDGROUPOPTIONS
 #$SAMTOOLS addreplacerg -@ $SAMTOOLSCORES -r 'ID:$ID' -r 'SM:$SM' -r 'LB:$LB' -r 'PL:$PL' -r 'PU:$PU'  -o $RGTAGGED $INPUT
 echo "$ID Done!"
