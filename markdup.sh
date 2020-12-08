@@ -17,4 +17,4 @@ REPORT=$MARKDUPDIR/$REPOUT
 
 echo "Marking Duplicates: $INPUT ..."
 $SAMTOOLS markdup -@ $SAMTOOLSCORES -s -f $REPORT $INPUT $MARKDUP
-
+echo "Done! Marking Duplicates: $INPUT"
