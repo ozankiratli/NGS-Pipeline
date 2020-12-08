@@ -25,6 +25,8 @@ $WD/markdup.sh $SORTED
 OUTPUT=$ID"_markdup.bam"
 MARKDUP=$MARKDUPDIR/$OUTPUT
 
-$WD/rgtags.sh $MARKDUP
+$WD/cleansam.sh $MARKDUP
+OUTPUT=$ID"_clean.bam"
+CLEAN=$CLEANDIR/$OUTPUT
 
-
+$WD/rgtags.sh $CLEAN
