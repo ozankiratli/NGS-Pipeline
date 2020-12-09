@@ -141,119 +141,123 @@ $WD/archivefiles.sh $TEMPDIR
 wait
 
 TEMPDIR=$SAMDIR
+echo "Starting Preprocessing..."
+$PARALLEL --progress -j $JOBBINS $WD/prepareone.sh {} ::: $INPUT
+wait
+echo "Done Preprocessing!"
 
-echo "Converting files from SAM to BAM..."
-mkdir -p $BAMDIR
-$PARALLEL --progress -j $SAMTOOLSJOBS $WD/samtobam.sh {} ::: $INPUT
-wait
-echo "Done!"
-INPUT=$BAMDIR"/*.bam"
-echo " " 
-echo " "
-$WD/archivefiles.sh $TEMPDIR 
-wait
+#echo "Converting files from SAM to BAM..."
+#mkdir -p $BAMDIR
+#$PARALLEL --progress -j $SAMTOOLSJOBS $WD/samtobam.sh {} ::: $INPUT
+#wait
+#echo "Done!"
+#INPUT=$BAMDIR"/*.bam"
+#echo " " 
+#echo " "
+#$WD/archivefiles.sh $TEMPDIR 
+#wait
 
-TEMPDIR=$BAMDIR
+#TEMPDIR=$BAMDIR
 
-echo "Sorting by name..."
-mkdir -p $NSORTEDDIR
-$PARALLEL --progress -j $SAMTOOLSJOBS $WD/namesort.sh {} ::: $INPUT
-wait 
-echo "Done!"
-INPUT=$NSORTEDDIR"/*.bam"
-echo " "
-echo " "
-$WD/archivefiles.sh $TEMPDIR
-wait
+#echo "Sorting by name..."
+#mkdir -p $NSORTEDDIR
+#$PARALLEL --progress -j $SAMTOOLSJOBS $WD/namesort.sh {} ::: $INPUT
+#wait 
+#echo "Done!"
+#INPUT=$NSORTEDDIR"/*.bam"
+#echo " "
+#echo " "
+#$WD/archivefiles.sh $TEMPDIR
+#wait
 
-TEMPDIR=$NSORTEDDIR
+#TEMPDIR=$NSORTEDDIR
 
-echo "Fixing Mate info..."
-mkdir -p $FIXEDDIR
-$PARALLEL --progress -j $SAMTOOLSJOBS $WD/fixmateinfo.sh {} ::: $INPUT
-wait
-echo "Done!"
-INPUT=$FIXEDDIR"/*.bam"
-echo " "
-echo " "
-$WD/archivefiles.sh $TEMPDIR
-wait
+#echo "Fixing Mate info..."
+#mkdir -p $FIXEDDIR
+#$PARALLEL --progress -j $SAMTOOLSJOBS $WD/fixmateinfo.sh {} ::: $INPUT
+#wait
+#echo "Done!"
+#INPUT=$FIXEDDIR"/*.bam"
+#echo " "
+#echo " "
+#$WD/archivefiles.sh $TEMPDIR
+#wait
 
-TEMPDIR=$FIXEDDIR
+#TEMPDIR=$FIXEDDIR
 
-echo "Sorting BAM files by coordinate..."
-mkdir -p $SORTEDDIR
-$PARALLEL --progress -j $SAMTOOLSJOBS $WD/coordsort.sh {} ::: $INPUT
-wait
-echo "Done!"
-INPUT=$SORTEDDIR"/*.bam"
-echo " "
-echo " "
-echo "Indexing BAM files..."
-$PARALLEL --progress -j $SAMTOOLSJOBS $WD/indexbam.sh {} ::: $INPUT
-wait
-echo "Done!"
-echo " "
-echo " "
-$WD/archivefiles.sh $TEMPDIR
-wait
+#echo "Sorting BAM files by coordinate..."
+#mkdir -p $SORTEDDIR
+#$PARALLEL --progress -j $SAMTOOLSJOBS $WD/coordsort.sh {} ::: $INPUT
+#wait
+#echo "Done!"
+#INPUT=$SORTEDDIR"/*.bam"
+#echo " "
+#echo " "
+#echo "Indexing BAM files..."
+#$PARALLEL --progress -j $SAMTOOLSJOBS $WD/indexbam.sh {} ::: $INPUT
+#wait
+#echo "Done!"
+#echo " "
+#echo " "
+#$WD/archivefiles.sh $TEMPDIR
+#wait
 
-TEMPDIR=$SORTEDDIR
+#TEMPDIR=$SORTEDDIR
 
-echo "Marking Duplicates..."
-mkdir -p $MARKDUPDIR
-$PARALLEL --progress -j $SAMTOOLSJOBS $WD/markdup.sh {} ::: $INPUT
-wait
-echo "Done!"
-INPUT=$MARKDUPDIR"/*.bam"
-echo " "
-echo " "
-echo "Indexing BAM files..."
-$PARALLEL --progress -j $SAMTOOLSJOBS $WD/indexbam.sh {} ::: $INPUT
-wait
-echo "Done!"
-echo " "
-echo " "
-$WD/archivefiles.sh $TEMPDIR
-wait
+#echo "Marking Duplicates..."
+#mkdir -p $MARKDUPDIR
+#$PARALLEL --progress -j $SAMTOOLSJOBS $WD/markdup.sh {} ::: $INPUT
+#wait
+#echo "Done!"
+#INPUT=$MARKDUPDIR"/*.bam"
+#echo " "
+#echo " "
+#echo "Indexing BAM files..."
+#$PARALLEL --progress -j $SAMTOOLSJOBS $WD/indexbam.sh {} ::: $INPUT
+#wait
+#echo "Done!"
+#echo " "
+#echo " "
+#$WD/archivefiles.sh $TEMPDIR
+#wait
 
-TEMPDIR=$MARKDUPDIR
+#TEMPDIR=$MARKDUPDIR
 
-echo "RG Tagging..."
-mkdir -p $RGTAGDIR
-$PARALLEL --progress -j $JOBBINS $WD/rgtags.sh {} ::: $INPUT
-wait
-echo "Done!"
-INPUT=$RGTAGDIR"/*.bam"
-echo " "
-echo " "
-echo "Indexing BAM files..."
-$PARALLEL --progress -j $SAMTOOLSJOBS $WD/indexbam.sh {} ::: $INPUT
-wait
-echo "Done!"
-echo " "
-echo " "
-$WD/archivefiles.sh $TEMPDIR
-wait
+#echo "RG Tagging..."
+#mkdir -p $RGTAGDIR
+#$PARALLEL --progress -j $JOBBINS $WD/rgtags.sh {} ::: $INPUT
+#wait
+#echo "Done!"
+#INPUT=$RGTAGDIR"/*.bam"
+#echo " "
+#echo " "
+#echo "Indexing BAM files..."
+#$PARALLEL --progress -j $SAMTOOLSJOBS $WD/indexbam.sh {} ::: $INPUT
+#wait
+#echo "Done!"
+#echo " "
+#echo " "
+#$WD/archivefiles.sh $TEMPDIR
+#wait
 
-TEMPDIR=$RGTAGDIR
+#TEMPDIR=$RGTAGDIR
 
-echo "Cleaning BAM files..."
-mkdir -p $CLEANDIR
-$PARALLEL --progress -j $JOBBINS $WD/cleansam.sh {} ::: $INPUT
-wait
-echo "Done!"
-INPUT=$CLEANDIR"/*.bam"
-echo " "
-echo " "
-echo "Indexing BAM files..."
-$PARALLEL --progress -j $SAMTOOLSJOBS $WD/indexbam.sh {} ::: $INPUT
-wait
-echo "Done!"
-echo " "
-echo " "
-$WD/archivefiles.sh $TEMPDIR
-wait
+#echo "Cleaning BAM files..."
+#mkdir -p $CLEANDIR
+#$PARALLEL --progress -j $JOBBINS $WD/cleansam.sh {} ::: $INPUT
+#wait
+#echo "Done!"
+#INPUT=$CLEANDIR"/*.bam"
+#echo " "
+#echo " "
+#echo "Indexing BAM files..."
+#$PARALLEL --progress -j $SAMTOOLSJOBS $WD/indexbam.sh {} ::: $INPUT
+#wait
+#echo "Done!"
+#echo " "
+#echo " "
+#$WD/archivefiles.sh $TEMPDIR
+#wait
 
 TEMPDIR=$CLEANDIR
 
