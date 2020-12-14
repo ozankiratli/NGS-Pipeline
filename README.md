@@ -12,7 +12,7 @@ The scripts use the following software for given purposes in the given order.
 9) `samtools index` for indexing 
 10) `samtools coverage` for coverage reports
 11) `bamtools stats` for alignment reports
-12) `freebayes` for variant calling 
+12) `bcftools` for variant calling 
  
 # USAGE
 ## Download
