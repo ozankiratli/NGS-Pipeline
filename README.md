@@ -48,3 +48,27 @@ If you encounter any errors during the process and clean all the files created b
 ```
 ./resetanalysis.sh
 ```
+
+### Best Practices
+- Before running `runall.sh`, use `trimall.sh` to quality control the trimming process. Checkout the fastqc reports after trimming and set `PARAMETERS` accordingly. 
+- Make sure that the core numbers are set properly. Try to use parallel more, but it depends on the number of files. For low numbers of files
+
+### How does this set of scripts work?
+0) The script checks 
+	- if the files are in place
+	- if the software is installed
+	- calculates a good way to use the cores available
+	- builds references from reference file
+1) Trimming is done with `trimgalore`.
+2) Aligning is done with `bwa`
+3) Preprocessing is done with `samtools` and `picard-tools`.
+	1) First, the files are sorted by name and mate info is fixed.
+	2) Second, the files are sorted by coordinate and duplicates are marked.
+	3) Third, the files are cleaned from reads that were not aligned.
+	4) Last, RG tags are added. 
+4) Variants are called with `bcftools`.
+
+- The middle files can be kept, deleted, or archived to another location.
+- The code also generates reports of trimming (fastqc reports), alignment, and coverage.
+
+
