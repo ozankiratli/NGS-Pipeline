@@ -6,7 +6,7 @@ source PROGRAMPATHS
 source DIRECTORIES
 
 echo "Calculating the number of cores needed for different programs..."
-$WD/calculatecores.sh
+$SD/calculatecores.sh
 echo " "
 echo "CORES will be used as:"
 cat CORES
@@ -64,7 +64,7 @@ fi
 
 
 echo "Checking whether the required programs installed..."
-source $WD/checkinstalled.sh
+source $SD/checkinstalled.sh
 echo " "
 CHECKPT1=`grep "not" $WD/checkinstalled.tmp`
 if [ ! -z "$CHECKPT1" ]
@@ -88,7 +88,7 @@ echo $REF
 REFERENCE=$REFERENCEDIR/$REF
 echo $REFERENCE
 export _JAVA_OPTIONS=$JAVAOPTIONS
-$WD/buildref.sh $REFERENCE > $REPORTSDIR/buildreference_report.txt
+$SD/buildref.sh $REFERENCE > $REPORTSDIR/buildreference_report.txt
 wait
 echo "Reference building is completed!"
 echo " "
@@ -101,7 +101,7 @@ mkdir -p $TRIMMEDDIR
 wait
 
 INPUT=$DATADIR"/*_R1_*.fastq.gz"
-$PARALLEL --progress -j $TRIMJOBS $WD/trimone.sh {} {=s/_R1_/_R2_/=} ::: $INPUT
+$PARALLEL --progress -j $TRIMJOBS $SD/trimone.sh {} {=s/_R1_/_R2_/=} ::: $INPUT
 wait
 
 mv *.zip $REPORTFASTQCDIR
@@ -115,7 +115,7 @@ echo "Trimming process is done!"
 echo " "
 echo " "
 TEMPDIR=$UNPAIREDDIR
-$WD/archivefiles.sh $TEMPDIR
+$SD/archivefiles.sh $TEMPDIR
 wait 
 echo " "
 
@@ -131,181 +131,44 @@ wait
 TEMPDIR=$TRIMMEDDIR
 echo "Starting aligning..."
 mkdir -p $SAMDIR
-$PARALLEL --progress -j $BWAJOBS $WD/alignone.sh $REFERENCE {} {=s/_R1_/_R2_/=} ::: $INPUT
+$PARALLEL --progress -j $BWAJOBS $SD/alignone.sh $REFERENCE {} {=s/_R1_/_R2_/=} ::: $INPUT
 wait
 echo "Aligning process is done!"
 INPUT=$SAMDIR"/*.sam"
 echo " "
 echo " "
-$WD/archivefiles.sh $TEMPDIR 
+$SD/archivefiles.sh $TEMPDIR 
 wait
 
 TEMPDIR=$SAMDIR
 echo "Starting Preprocessing..."
-$PARALLEL --progress -j $JOBBINS $WD/prepareone.sh {} ::: $INPUT
+$PARALLEL --progress -j $JOBBINS $SD/prepareone.sh {} ::: $INPUT
 wait
 echo "Done Preprocessing!"
 
-#echo "Converting files from SAM to BAM..."
-#mkdir -p $BAMDIR
-#$PARALLEL --progress -j $SAMTOOLSJOBS $WD/samtobam.sh {} ::: $INPUT
-#wait
-#echo "Done!"
-#INPUT=$BAMDIR"/*.bam"
-#echo " " 
-#echo " "
-#$WD/archivefiles.sh $TEMPDIR 
-#wait
-
-#TEMPDIR=$BAMDIR
-
-#echo "Sorting by name..."
-#mkdir -p $NSORTEDDIR
-#$PARALLEL --progress -j $SAMTOOLSJOBS $WD/namesort.sh {} ::: $INPUT
-#wait 
-#echo "Done!"
-#INPUT=$NSORTEDDIR"/*.bam"
-#echo " "
-#echo " "
-#$WD/archivefiles.sh $TEMPDIR
-#wait
-
-#TEMPDIR=$NSORTEDDIR
-
-#echo "Fixing Mate info..."
-#mkdir -p $FIXEDDIR
-#$PARALLEL --progress -j $SAMTOOLSJOBS $WD/fixmateinfo.sh {} ::: $INPUT
-#wait
-#echo "Done!"
-#INPUT=$FIXEDDIR"/*.bam"
-#echo " "
-#echo " "
-#$WD/archivefiles.sh $TEMPDIR
-#wait
-
-#TEMPDIR=$FIXEDDIR
-
-#echo "Sorting BAM files by coordinate..."
-#mkdir -p $SORTEDDIR
-#$PARALLEL --progress -j $SAMTOOLSJOBS $WD/coordsort.sh {} ::: $INPUT
-#wait
-#echo "Done!"
-#INPUT=$SORTEDDIR"/*.bam"
-#echo " "
-#echo " "
-#echo "Indexing BAM files..."
-#$PARALLEL --progress -j $SAMTOOLSJOBS $WD/indexbam.sh {} ::: $INPUT
-#wait
-#echo "Done!"
-#echo " "
-#echo " "
-#$WD/archivefiles.sh $TEMPDIR
-#wait
-
-#TEMPDIR=$SORTEDDIR
-
-#echo "Marking Duplicates..."
-#mkdir -p $MARKDUPDIR
-#$PARALLEL --progress -j $SAMTOOLSJOBS $WD/markdup.sh {} ::: $INPUT
-#wait
-#echo "Done!"
-#INPUT=$MARKDUPDIR"/*.bam"
-#echo " "
-#echo " "
-#echo "Indexing BAM files..."
-#$PARALLEL --progress -j $SAMTOOLSJOBS $WD/indexbam.sh {} ::: $INPUT
-#wait
-#echo "Done!"
-#echo " "
-#echo " "
-#$WD/archivefiles.sh $TEMPDIR
-#wait
-
-#TEMPDIR=$MARKDUPDIR
-
-#echo "RG Tagging..."
-#mkdir -p $RGTAGDIR
-#$PARALLEL --progress -j $JOBBINS $WD/rgtags.sh {} ::: $INPUT
-#wait
-#echo "Done!"
-#INPUT=$RGTAGDIR"/*.bam"
-#echo " "
-#echo " "
-#echo "Indexing BAM files..."
-#$PARALLEL --progress -j $SAMTOOLSJOBS $WD/indexbam.sh {} ::: $INPUT
-#wait
-#echo "Done!"
-#echo " "
-#echo " "
-#$WD/archivefiles.sh $TEMPDIR
-#wait
-
-#TEMPDIR=$RGTAGDIR
-
-#echo "Cleaning BAM files..."
-#mkdir -p $CLEANDIR
-#$PARALLEL --progress -j $JOBBINS $WD/cleansam.sh {} ::: $INPUT
-#wait
-#echo "Done!"
-#INPUT=$CLEANDIR"/*.bam"
-#echo " "
-#echo " "
-#echo "Indexing BAM files..."
-#$PARALLEL --progress -j $SAMTOOLSJOBS $WD/indexbam.sh {} ::: $INPUT
-#wait
-#echo "Done!"
-#echo " "
-#echo " "
-#$WD/archivefiles.sh $TEMPDIR
-#wait
-
-TEMPDIR=$CLEANDIR
-
-
-#BSQR goes here!
-#
-#
-#
-
-mkdir -p $READYDIR
 mkdir -p $VCFDIR
 mkdir -p $REPORTALIGNDIR
 mkdir -p $REPORTCOVERDIR
 
-cp $TEMPDIR/* $READYDIR/ &
-echo "Done!"
-wait
-echo " "
-echo " " 
-echo "Renaming!"
-
-INPUT=$READYDIR"/*"
-for file in $INPUT ; do
-	newfile=`echo $file | sed 's/\_^*[a-z]\w*.bam/_ready.bam/g' `
-	echo "Renaming $file to $newfile"
-	mv $file $newfile
-done
-
-
 INPUT=$READYDIR"/*.bam"
 
 echo "Generating alignment reports!"
-$PARALLEL --progress -j $SAMTOOLSJOBS $WD/reportalign.sh {} ::: $INPUT
-$PARALLEL --progress -j $SAMTOOLSJOBS $WD/reportcoverage.sh {} ::: $INPUT
+$PARALLEL --progress -j $SAMTOOLSJOBS $SD/reportalign.sh {} ::: $INPUT
+$PARALLEL --progress -j $SAMTOOLSJOBS $SD/reportcoverage.sh {} ::: $INPUT
 echo "Done generating reports"
 
 
 echo "Starting variant calling..."
-nohup $WD/archivefiles.sh $TEMPDIR </dev/null >/dev/null 2>&1 &
+nohup $SD/archivefiles.sh $TEMPDIR </dev/null >/dev/null 2>&1 &
 wait
 echo " "
-$WD/variantcaller.sh $REFERENCE
+$SD/variantcaller.sh $REFERENCE
 wait
 echo "Done!"
 echo " "
 mkdir -p $RESULTSDIR
 echo "Copying results to $RESULTSDIR ..."
-$WD/copyresults.sh
+$SD/copyresults.sh
 wait
 echo "Done!"
 echo " "
