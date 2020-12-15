@@ -100,8 +100,11 @@ mkdir -p $UNPAIREDDIR
 mkdir -p $TRIMMEDDIR
 wait
 
-INPUT=$DATADIR"/*_R1_*.fastq.gz"
-$PARALLEL --progress -j $TRIMJOBS $SD/trimone.sh {} {=s/_R1_/_R2_/=} ::: $INPUT
+INPUT=$DATADIR"/*"$READ1EXTENSION
+READ1=`echo $READ1EXTENSION | sed 's/\./ /g' | awk '{print $1}' `
+READ2=`echo $READ2EXTENSION | sed 's/\./ /g' | awk '{print $1}' `
+
+$PARALLEL --progress -j $TRIMJOBS $SD/trimone.sh {} {=s/$READ1/$READ2/=} ::: $INPUT
 wait
 
 mv *.zip $REPORTFASTQCDIR
@@ -125,13 +128,13 @@ for file in $LIST ; do
 	echo "$file $newfile"
 	mv $TRIMMEDDIR/$file $TRIMMEDDIR/$newfile 2>/dev/null
 done
-INPUT=$TRIMMEDDIR"/*_R1_*.fq.gz"
+INPUT=$TRIMMEDDIR"/*"$READ1".fq.gz"
 wait
 
 TEMPDIR=$TRIMMEDDIR
 echo "Starting aligning..."
 mkdir -p $SAMDIR
-$PARALLEL --progress -j $BWAJOBS $SD/alignone.sh $REFERENCE {} {=s/_R1_/_R2_/=} ::: $INPUT
+$PARALLEL --progress -j $BWAJOBS $SD/alignone.sh $REFERENCE {} {=s/$READ1/$READ2/=} ::: $INPUT
 wait
 echo "Aligning process is done!"
 INPUT=$SAMDIR"/*.sam"

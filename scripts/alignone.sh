@@ -9,7 +9,8 @@ source PARAMETERS
 source DIRECTORIES
 source CORES
 
-OUTPUT=`echo $INPUT1 | sed 's/\// /g' | awk '{print $NF}' | sed 's/\_R[0-9]_/ /g' | awk '{print $1}'`
+READ1=`echo $READ1EXTENSION | sed 's/\./ /g' | awk '{print $1}' `
+OUTPUT=`echo $INPUT1 | sed 's/\// /g' | awk '{print $NF}' | sed "s/$READ1/ /g" | awk '{print $1}'`
 SAM=$SAMDIR/$OUTPUT.sam
 
 echo "Aligning $INPUT1 and $INPUT2 ..."
