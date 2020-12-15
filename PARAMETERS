@@ -5,6 +5,8 @@ THREADS=30
 JOBBINS=5 
 DATASOURCE=Data
 REFERENCEFILE=/home/ozank/Analysis/NGS-Pipeline/Dmel_mtDNA_ref_v6.fasta
+READ1EXTENSION="_R1.fastq.gz"
+READ2EXTENSION="_R2.fastq.gz"
 
 # JAVA OPTIONS
 # Heap size should be set to a value below (AVAILBLE_RAM/THREADS)
