@@ -71,4 +71,4 @@ If you encounter any errors during the process and clean all the files created b
 - The middle files can be kept, deleted, or archived to another location.
 - The code also generates reports of trimming (fastqc reports), alignment, and coverage.
 
-
+P.S. I haven't developed this project for some time, but if you need help with it, send me an [email](mailto:ozankiratli@protonmail.com).
